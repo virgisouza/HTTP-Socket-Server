@@ -1,93 +1,121 @@
 const net = require('net');
 const fs = require('fs');
+const path = require('path');
 
 
-const server = net.createServer((client) => {
+const server = net.createServer((socket) => {
 
-  client.on('data', (data) => {
+  socket.on('data', (data) => {
     console.log('connected to server');
     const dataString = data.toString();
-
     const uri = dataString.split(' ')[1];
 
 
-    if( uri === '/'){
-      fs.readFile('../html/index.html', (err, data) => {
-        if (err) throw err;
-          console.log(data.toString());
-      })
+  function buildBodyandHeader(target, path) {
+     let header = 'GET/ index.html HTTP / 1.1\r\nServer : www.alvin.com\r\nDate : Tue, 03 Oct 2017 22:17:07 GMT';
+
+     if( uri === target){
+        fs.readFile(path, (err, data) => {
+          if (err){
+            throw err;
+            //console log err returns 'null'
+          }else{
+            return header + '\n\n' + data.toString();
+            console.log(header + '\n\n' + data.toString());
+          };
+
+        });
     };
+    socket.end();
+  };
 
-    if(uri === '/index.html' ){
-      fs.readFile('../html/index.html', (err, data) => {
-        if (err) throw err;
-          console.log(data.toString());
-      })
-    };
+buildBodyandHeader('/helium.html', '../html/helium.html');
 
-    if(uri === '/hydrogen.html' ){
-      fs.readFile('../html/hydrogen.html', (err, data) => {
-        if (err) throw err;
-          console.log(data.toString());
-      })
-    };
 
-    if( uri === '/helium.html'){
-      fs.readFile('../html/helium.html', (err, data) => {
-        if (err) throw err;
-          console.log(data.toString());
-      })
-    };
-
-    if( uri === '/styles.css'){
-      fs.readFile('../css/styles.css', (err, data) => {
-        if (err) throw err;
-          console.log(data.toString());
-      })
-    };
-
-    client.end();
-  });
-
-  client.on('end', () => {
+  socket.on('end', () => {
     console.log('socket ended');
   });
 
-  client.on('error', (err) => {
+  socket.on('error', (err) => {
     throw err
   });
 
+  });
 });
-
-
 
 server.listen(8080,  () => {});
 
-server.on('connection', (c) => {});
+
+////////////////////////////////////////////////////
+
+//let response = ' ';
+
+// read(element, (fileContent) => {
+//   response += fileContents;
+//   socket.write(response, (err) => {
+//     socket.end()
+//   })
+// })
+
+  // let buildHeader = function (statusCode, server) {
+
+  //   function date(){
+  //     var d = new Date();
+  //     var n = d.toUTCString();
+  //     return n;
+  //   }
+
+  //   function host(server) {
+  //     return server;
+  //   }
+
+  //   function status(statusCode) {
+  //     return statusCode;
+  //   }
 
 
+  //   return {
+  //     date : date,
+  //     host : host,
+  //     status : status
+  //   }
+  // }
 
+  // console.log(Object.values(buildHeader('200 OK', 'www.alvin.com')));
 
+//server.on('connection', (c) => {});
 
-// {
-//       'GET/ index.html HTTP / 1.1\r\n'
-//       'Host': 'www.alvin.com\r\n'
-//       'Connection' : 'Keep-Alive\r\n'
-//       'Content-type' : 'text/plain\r\n'
-//     }
+   // if( uri === '/'){
+    //   fs.readFile('../html/index.html', (err, data) => {
+    //     if (err) throw err;
+    //       console.log(data.toString());
+    //   })
+    // };
 
+    // if(uri === '/index.html' ){
+    //   fs.readFile('../html/index.html', (err, data) => {
+    //     if (err) throw err;
+    //       console.log(data.toString());
+    //   })
+    // };
 
+    // if(uri === '/hydrogen.html' ){
+    //   fs.readFile('../html/hydrogen.html', (err, data) => {
+    //     if (err) throw err;
+    //       console.log(data.toString());
+    //   })
+    // };
 
-//Goals:
-//transmit hardcoded, in-memory html body for each route
-//term connection
-//if path not found, return 404
+    // if( uri === '/helium.html'){
+    //   fs.readFile('../html/helium.html', (err, data) => {
+    //     if (err) throw err;
+    //       console.log(data.toString());
+    //   })
+    // };
 
-/////////////////////////////////////////////////////
-
-//http server example
-// http.createServer(function (request, response) {
-//   response.writeHead(200, {'POST': 'HTTP/1.1\n', 'Host': 'www.alvin.com\n','Connection' : 'Keep-Alive\n', 'Content-type' : 'text/plain\n'});
-//   response.write('Hello Client , From your server');
-//   response.end();
-// }).listen(8080)
+    // if( uri === '/styles.css'){
+    //   fs.readFile('../css/styles.css', (err, data) => {
+    //     if (err) throw err;
+    //       console.log(data.toString());
+    //   })
+    // };
