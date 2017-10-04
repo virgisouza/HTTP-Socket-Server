@@ -1,13 +1,62 @@
-// const net = require('net');
-// const PORT = process.env.PORT || 8080;
-// const server = new net.Socket();
+const net = require('net');
+const fs = require('fs');
+const PORT = process.env.PORT || 8080;
+const client = new net.Socket();
 
-// server.connect(PORT, () => {
+client.connect(PORT, () => {
+  console.log('Connected');
+  let target = process.stdin.pipe( client );
+  client.pipe( process.stdout );
 
-//   process.stdin.pipe( server );
 
-//   server.pipe( process.stdout );
+  client.on('data', (data) => {
+    let responseHeaders = {};
 
-//   console.log(server.address())
+    function receiveHeaders(target, data) {
+      fs.readFile(target, (err, data) => {
+        if(err){
+          throw err;
+        }else{
+          console.log(target)
+          //push data into hash table responseHeaders
+        }
+      });
+    };
 
-// });
+  })
+
+
+
+
+  function date() {
+    var d = new Date();
+    var n = d.toUTCString();
+    return n;
+  };
+
+  client.write('data', (data) => {
+    //const dataString = data.toString();
+
+    function giveBack(target) {
+      let header = `POST ${target} HTTP/1.1\r\nDate : ${date()}\r\nHost: www.alvin.com\r\nUser-Agent: me`;
+      console.log(header)
+
+    };
+
+
+  });
+
+  // client.end();
+
+  client.on('close', function() {
+    console.log('Connection closed');
+  });
+
+  client.on('error', (err) => {
+    throw err;
+  });
+
+});
+
+
+

@@ -8,18 +8,22 @@ const server = net.createServer((socket) => {
     const dataString = data.toString();
     const uri = dataString.split(' ')[1];
 
+    function date() {
+      var d = new Date();
+      var n = d.toUTCString();
+      return n;
+    }
 
     function buildBodyandHeader(target, path) {
-     let header = 'GET/ index.html HTTP / 1.1\r\nServer : www.alvin.com\r\nDate : Tue, 03 Oct 2017 22:17:07 GMT';
 
      if( uri === target){
-        fs.readFile(path, (err, data) => {
+        fs.readFile(path, 'utf8', (err, data) => {
           if (err){
             throw err;
             //console log err returns 'null'
           }else{
-            //console.log(header + '\n\n' + data.toString());
-            socket.write(header + '\n\n' + data.toString(), () => {
+            let header = `HTTP/1.1 200 OK\nServer: nginx/1.4.6 (Ubuntu)\nDate: ${date()}\nContent-Type: text/html; charset=utf-8\nContent-Length: ${data.length}\nConnection: keep-alive`;
+            socket.write(header + '\n\n' + data, () => {
               socket.end();
             });
           };
@@ -47,6 +51,7 @@ const server = net.createServer((socket) => {
 });
 
 server.listen(8080,  () => {});
+
 
 
 
